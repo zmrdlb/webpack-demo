@@ -11,7 +11,7 @@ module.exports = {
     entry: __dirname + "/app/main.js",//已多次提及的唯一入口文件
     output: {
         path: __dirname + "/build",
-        filename: "bundle-[hash].js"
+        filename: "[name]-[hash].js"
     },
     module: {
         rules: [
@@ -22,6 +22,10 @@ module.exports = {
                 },
                 exclude: /node_modules/
             },
+            // {
+            //     test: /\.css$/,
+            //     loader: ExtractTextPlugin.extract('style', 'css?modules!postcss')
+            // }
             {
                 test: /\.css$/,
                 use: [
@@ -46,6 +50,6 @@ module.exports = {
         }),
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.UglifyJsPlugin(),
-        new ExtractTextPlugin("style.css")
+        new ExtractTextPlugin("[name]-[hash].css")
     ],
 };

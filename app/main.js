@@ -5,6 +5,6 @@ import Greeter from './Greeter';
 import "./main.css";
 
 ReactDOM.render(
-    <Greeter>Hello, ZMRDLB! 嘿嘿</Greeter>,
+    <Greeter>Hello, ZMRDLB!</Greeter>,
     document.getElementById('root')
 );
