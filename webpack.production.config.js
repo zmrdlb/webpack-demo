@@ -1,55 +1,32 @@
 // webpack.production.config.js
-// 本来 "build": "NODE_ENV=production webpack --config ./webpack.production.config.js --progress"
-// 但是NODE_ENV设置报错，后面排查
-process.env.NODE_ENV = 'production';
 
+const path = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Merge = require('webpack-merge');
+const CommonConfig = require('./webpack.common.js');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-module.exports = {
-    entry: __dirname + "/app/main.js",//已多次提及的唯一入口文件
+process.env.NODE_ENV = 'production';
+
+module.exports = Merge(CommonConfig, {
     output: {
-        path: __dirname + "/build",
-        filename: "[name]-[hash].js"
-    },
-    module: {
-        rules: [
-            {
-                test: /(\.jsx|\.js)$/,
-                use: {
-                    loader: "babel-loader"
-                },
-                exclude: /node_modules/
-            },
-            // {
-            //     test: /\.css$/,
-            //     loader: ExtractTextPlugin.extract('style', 'css?modules!postcss')
-            // }
-            {
-                test: /\.css$/,
-                use: [
-                    {
-                        loader: "style-loader"
-                    }, {
-                        loader: "css-loader",
-                        options: {
-                            modules: true
-                        }
-                    }, {
-                        loader: "postcss-loader"
-                    }
-                ]
-            }
-        ]
+        path: path.resolve(__dirname,"build"),
+        filename: "js/[name].[chunkhash].js",
+        sourceMapFilename: 'js/[name].map'
     },
     plugins: [
-        new webpack.BannerPlugin('版权所有，翻版必究'),
-        new HtmlWebpackPlugin({
-            template: __dirname + "/app/index.tmpl.html"//new 一个这个插件的实例，并传入相关的参数
+        new CleanWebpackPlugin(['build']),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('production') //'"production"'
+        }),
+        new webpack.HashedModuleIdsPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
         }),
         new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.optimize.UglifyJsPlugin(),
-        new ExtractTextPlugin("[name]-[hash].css")
+        new ExtractTextPlugin('css/[name].[contenthash].css')
     ],
-};
+});

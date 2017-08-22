@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import config from './config.json';
 
 import styles from './Greeter.css';
+import ArrowPng from './arrow-circle-left.png';
 
 class Greeter extends Component {
     render() {
@@ -9,6 +10,9 @@ class Greeter extends Component {
             <div className={styles.root}>
                 <h1>{config.greetText}</h1>
                 <p>{this.props.children}</p>
+                <img src={ArrowPng} />
+                <span className={styles.number}>28</span>
+                <div className={styles.house}></div>
             </div>
         );
     }
