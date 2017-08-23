@@ -4,36 +4,37 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-      index: './app/index.js',
-      another: './app/another-module.js',
+      index: './app/index/index.js',
+      another: './app/another/index.js',
       vendor: [
-          'lodash',
           'react',
           'react-dom'
       ]
+  },
+
+  resolve: {
+      alias: {
+          "comp": path.resolve(__dirname,"components")
+      }
   },
 
   //loader 翻译文件变成浏览器可识别的。
   module: {
       rules: [{
             test: /\.(jsx|js)$/,
-            use: {
-                loader: "babel-loader",
-            },
+            loader: "babel-loader",
             exclude: /node_modules/
       },{
             test: /\.css$/,
             use: [
+                "style-loader",
                 {
-                    loader: "style-loader"
-                }, {
                     loader: "css-loader",
                     options: {
                         modules: true
                     }
-                }, {
-                    loader: "postcss-loader" //postcss: http://postcss.org/ 使用js翻译css的工具
-                }
+                },
+                "postcss-loader" //postcss: http://postcss.org/ 使用js翻译css的工具
             ]
        },{ //加载图片
            test: /\.(png|svg|jpg|gif)$/,
@@ -57,8 +58,14 @@ module.exports = {
    plugins: [
        new webpack.BannerPlugin('版权所有 zmrdlb'), //给打包后的代码添加版权声明
        new HtmlWebpackPlugin({
-           title: '代码分离',
-           template: "./app/index.tmpl.html"//new 一个这个插件的实例，并传入相关的参数
+           chunks: ['runtime','vendor','index'],
+           template: './app/index.tmpl.html',
+           filename: 'index.html'
+       }),
+       new HtmlWebpackPlugin({
+           chunks: ['runtime','vendor','another'],
+           template: './app/another.tmpl.html',
+           filename: 'another.html'
        }),
        //将entry中声明的vendor提取到单独的vendor文件中
        new webpack.optimize.CommonsChunkPlugin({

@@ -3,6 +3,7 @@
   "env": {
     "development": {
         "plugins": [
+            ["syntax-dynamic-import"],
             ["react-transform", {
                "transforms": [{
                  "transform": "react-transform-hmr",

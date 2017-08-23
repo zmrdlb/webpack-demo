@@ -10,10 +10,11 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 process.env.NODE_ENV = 'production';
 
 module.exports = Merge(CommonConfig, {
+    devtool: 'source-map',
     output: {
         path: path.resolve(__dirname,"build"),
         filename: "js/[name].[chunkhash].js",
-        sourceMapFilename: 'js/[name].map'
+        sourceMapFilename: "js/[file].map", // string
     },
     plugins: [
         new CleanWebpackPlugin(['build']),
