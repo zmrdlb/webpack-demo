@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Greeter from 'comp/Greeter';
 
-import "./index.css";
+import "./index.less";
 
 ReactDOM.render(
     <Greeter>Hello, ZMRDLB!</Greeter>,

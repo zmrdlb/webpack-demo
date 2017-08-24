@@ -7,8 +7,9 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = Merge(CommonConfig, {
   devtool: 'eval-source-map', //source-map配置。
   output: {
-    path: path.resolve(__dirname,"public"),//打包后的文件存放的地方
-    filename: "[name].bundle.js"//打包后输出文件的文件名
+    path: path.resolve(__dirname,"public"), //打包后的文件存放的地方
+    filename: "js/[name].bundle.js", //打包后输出文件的文件名
+    // chunkFilename: '[name].bundle.js'
   },
 
   /**
@@ -32,7 +33,6 @@ module.exports = Merge(CommonConfig, {
     */
    plugins: [
        new CleanWebpackPlugin(['public']), //先清理public文件夹
-       new webpack.NamedModulesPlugin(),
        new webpack.HotModuleReplacementPlugin()//热加载插件
    ]
 });

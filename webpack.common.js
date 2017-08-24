@@ -1,8 +1,56 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-module.exports = {
+var _prod = process.env.NODE_ENV == 'production';
+
+var cssRule = {
+      test: /\.less$/,
+      use: [ //链式调用从下到上
+          "style-loader",
+          {
+              loader: "css-loader",
+              // 如果不使用less-loader,并且使用局部css声明使用。如果使用less-loader，用这个功能有问题
+            //   options: {
+            //       modules: true
+            //   }
+          },
+          "postcss-loader", //postcss: http://postcss.org/ 使用js翻译css的工具
+          "less-loader"
+      ]
+ };
+
+ if(_prod){
+     console.log('生产环境');
+     cssRule = {
+           test: /\.less$/,
+           use: ExtractTextPlugin.extract({
+               fallback: "style-loader",
+               use: [ //链式调用从下到上
+                   {
+                       loader: "css-loader",
+                    //    options: {
+                    //        sourceMap: true
+                    //    }
+                   },{
+                       loader: 'postcss-loader',
+                    //    options: {
+                    //        sourceMap: true
+                    //    }
+                   }, //postcss: http://postcss.org/ 使用js翻译css的工具
+                   {
+                       loader: "less-loader",
+                    //    options: {
+                    //        sourceMap: true
+                    //    }
+                   }
+               ]
+           })
+     };
+ }
+
+var that = {
   entry: {
       index: './app/index/index.js',
       another: './app/another/index.js',
@@ -24,28 +72,26 @@ module.exports = {
             test: /\.(jsx|js)$/,
             loader: "babel-loader",
             exclude: /node_modules/
-      },{
-            test: /\.css$/,
-            use: [
-                "style-loader",
-                {
-                    loader: "css-loader",
-                    options: {
-                        modules: true
-                    }
-                },
-                "postcss-loader" //postcss: http://postcss.org/ 使用js翻译css的工具
-            ]
-       },{ //加载图片
+      },
+      cssRule,
+      { //加载图片
            test: /\.(png|svg|jpg|gif)$/,
-           use: [
-               'file-loader'
-           ]
+           use: [{
+               loader: 'file-loader',
+               options: {
+                   outputPath: 'image/', //文件输出路径
+                   publicPath: '../' //代码中文件替换路径
+               }
+           }]
        },{ //加载字体
            test: /\.(woff|woff2|eot|ttf|otf)$/,
-           use: [
-               'file-loader'
-           ]
+           use: [{
+               loader: 'file-loader',
+               options: {
+                   outputPath: 'font/',
+                   publicPath: '../'
+               }
+           }]
        }]
    },
 
@@ -57,23 +103,39 @@ module.exports = {
     */
    plugins: [
        new webpack.BannerPlugin('版权所有 zmrdlb'), //给打包后的代码添加版权声明
+       //多页应用实例 MPA
+    //    new HtmlWebpackPlugin({
+    //        chunks: ['runtime','vendor','index'],
+    //        template: './app/index.tmpl.html',
+    //        filename: 'index.html'
+    //    }),
+    //    new HtmlWebpackPlugin({
+    //        chunks: ['runtime','vendor','another'],
+    //        template: './app/another.tmpl.html',
+    //        filename: 'another.html'
+    //    }),
+       //单页应用 SPA
        new HtmlWebpackPlugin({
-           chunks: ['runtime','vendor','index'],
-           template: './app/index.tmpl.html',
+           template: './app/index.spa.tmpl.html',
            filename: 'index.html'
-       }),
-       new HtmlWebpackPlugin({
-           chunks: ['runtime','vendor','another'],
-           template: './app/another.tmpl.html',
-           filename: 'another.html'
        }),
        //将entry中声明的vendor提取到单独的vendor文件中
        new webpack.optimize.CommonsChunkPlugin({
-           name: 'vendor' // Specify the common bundle's name.
+           name: 'vendor'
        }),
        //将index.js和another-module.js里公共的部分，提取到runtime.bundle.js
        new webpack.optimize.CommonsChunkPlugin({
-           name: 'runtime' // Specify the common bundle's name.
+            name: 'runtime' // Specify the common bundle's name.
        })
+       //提取entry文件的公共部分
+    //    new webpack.optimize.CommonsChunkPlugin({
+    //        name: 'common'
+    //    })
    ]
+};
+
+if(_prod){
+    that.plugins.push(new ExtractTextPlugin('css/[name].[contenthash].css'))
 }
+
+module.exports = that;
