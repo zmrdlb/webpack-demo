@@ -17,6 +17,7 @@ module.exports = Merge(CommonConfig, {
     },
     plugins: [
         new CleanWebpackPlugin(['build']),
+        // new webpack.HashedModuleIdsPlugin(),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production') //'"production"'
         }),

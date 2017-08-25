@@ -121,11 +121,13 @@ var that = {
        }),
        //将entry中声明的vendor提取到单独的vendor文件中
        new webpack.optimize.CommonsChunkPlugin({
-           name: 'vendor'
+           name: 'vendor',
+           minChunks: Infinity
        }),
        //将index.js和another-module.js里公共的部分，提取到runtime.bundle.js
        new webpack.optimize.CommonsChunkPlugin({
-            name: 'runtime' // Specify the common bundle's name.
+           name: 'runtime', // Specify the common bundle's name.
+           minChunks: Infinity
        })
        //提取entry文件的公共部分
     //    new webpack.optimize.CommonsChunkPlugin({
