@@ -30,20 +30,21 @@ var cssRule = {
                use: [ //链式调用从下到上
                    {
                        loader: "css-loader",
-                    //    options: {
-                    //        sourceMap: true
-                    //    }
+                       options: {
+                           sourceMap: true,
+                           minimize: true
+                       }
                    },{
                        loader: 'postcss-loader',
-                    //    options: {
-                    //        sourceMap: true
-                    //    }
+                       options: {
+                           sourceMap: true
+                       }
                    }, //postcss: http://postcss.org/ 使用js翻译css的工具
                    {
                        loader: "less-loader",
-                    //    options: {
-                    //        sourceMap: true
-                    //    }
+                       options: {
+                           sourceMap: true
+                       }
                    }
                ]
            })
@@ -77,10 +78,12 @@ var that = {
       { //加载图片
            test: /\.(png|svg|jpg|gif)$/,
            use: [{
-               loader: 'file-loader',
+               loader: 'url-loader',
                options: {
+                   limit: 8192, //文件小于此字节则返回data-url
+                //    name: '[hash].[ext]',
                    outputPath: 'image/', //文件输出路径
-                   publicPath: '../' //代码中文件替换路径
+                //    publicPath: '/' // 此时文件路径是 outputPath+name，因为output已经设置了publicPath，所以此处不用
                }
            }]
        },{ //加载字体
@@ -88,8 +91,9 @@ var that = {
            use: [{
                loader: 'file-loader',
                options: {
+                //    name: '[hash].[ext]',
                    outputPath: 'font/',
-                   publicPath: '../'
+                //    publicPath: '/'
                }
            }]
        }]
@@ -117,7 +121,11 @@ var that = {
        //单页应用 SPA
        new HtmlWebpackPlugin({
            template: './app/index.spa.tmpl.html',
-           filename: 'index.html'
+           filename: 'index.html',
+           minify: _prod? {
+                removeComments: true,
+                collapseWhitespace: true
+           }: false
        }),
        //将entry中声明的vendor提取到单独的vendor文件中
        new webpack.optimize.CommonsChunkPlugin({

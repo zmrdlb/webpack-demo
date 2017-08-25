@@ -12,7 +12,8 @@ module.exports = Merge(CommonConfig, {
     output: {
         path: path.resolve(__dirname,"build"),
         filename: "js/[name].[chunkhash].js",
-        sourceMapFilename: "js/[name].[chunkhash].map"
+        sourceMapFilename: "js/[name].[chunkhash].map",
+        publicPath: '/'
         // chunkFilename: 'js/[id].[chunkhash].js'
     },
     plugins: [

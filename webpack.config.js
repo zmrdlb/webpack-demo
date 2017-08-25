@@ -9,6 +9,7 @@ module.exports = Merge(CommonConfig, {
   output: {
     path: path.resolve(__dirname,"public"), //打包后的文件存放的地方
     filename: "js/[name].bundle.js", //打包后输出文件的文件名
+    publicPath: '/'
     // chunkFilename: '[name].bundle.js'
   },
 
