@@ -15,3 +15,7 @@ webpack学习使用。有的学习总结直接写在了代码里了。
 - "targets.browsers": 使用了[browserslist](https://github.com/browserslist/browserslist)。默认配置是"> 0.5%, last 2 versions, Firefox ESR, not dead", 可设置"浏览器对比设置"来重新npm run build，对比dist/js中的文件大小。
 
 - "useBuiltIns": 设置为true时，将browsers设置为"浏览器对比设置", 重新编译，对比venders.js里面对polyfill引入的数量不同。
+
+# package.json
+
+- [sideEffects](https://webpack.docschina.org/guides/tree-shaking/#mark-the-file-as-side-effect-free): 这个设置看文档就知道干啥了。但是有个注意的是，代码压缩了才能去除不需要的代码，所以npm run build在dist里面查看commons.js,才能够看出来。
