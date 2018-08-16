@@ -1,1 +1,0 @@
-{"version":3,"sources":["webpack:///./src/async/list/index.js"],"names":["__webpack_require__","default"],"mappings":";2FAKA,oDAFAA,EAAA,MAEAC,SAAQ","file":"js/4.5cfa0ce79a19f52c0ae4.js","sourcesContent":["// const dynamic = await import ('async/dynamic-common');\n// dynamic.default('list');\n\nimport Dynamic from 'async/dynamic-common';\n\nDynamic('list');\n"],"sourceRoot":""}

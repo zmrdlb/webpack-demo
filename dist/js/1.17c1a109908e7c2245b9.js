@@ -1,3 +1,0 @@
-/*! 版权所有 zmrdlb */
-(window.webpackJsonp=window.webpackJsonp||[]).push([[1],{193:function(o,n,e){"use strict";(function(o){Object.defineProperty(n,"__esModule",{value:!0}),n.default=function(o){console.log(o+"调用了dynamic-common")};var c=function(o){return o&&o.__esModule?o:{default:o}}(e(58));console.log("dynamic-common.js加载进来了"),console.log(c.default.join(o,"dynamic-common"))}).call(this,"/")}}]);
-//# sourceMappingURL=1.17c1a109908e7c2245b9.map

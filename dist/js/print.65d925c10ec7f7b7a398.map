@@ -1,1 +1,0 @@
-{"version":3,"sources":["webpack:///./src/async/print/index.js"],"names":["console","log","alert"],"mappings":";2IAAAA,QAAQC,IAAI,iFAEG,WACZC,MAAM","file":"js/print.65d925c10ec7f7b7a398.js","sourcesContent":["console.log('The print.js module has loaded! See the network tab in dev tools...');\n\nexport default () => {\n   alert('print.js已经加载进来啦');\n}\n"],"sourceRoot":""}
