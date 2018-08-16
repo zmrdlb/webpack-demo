@@ -5,12 +5,13 @@ const CommonConfig = require('./webpack.common.js');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = Merge(CommonConfig, {
-  devtool: 'eval-source-map', //source-map配置。
+  devtool: 'eval-source-map', //source-map配置。官方给出的是：inline-source-map
+  mode: 'development',
   output: {
     path: path.resolve(__dirname,"public"), //打包后的文件存放的地方
     filename: "js/[name].bundle.js", //打包后输出文件的文件名
+    chunkFilename: 'js/[name].bundle.js', //非entry point的文件名称
     publicPath: '/'
-    // chunkFilename: '[name].bundle.js'
   },
 
   /**

@@ -3,6 +3,11 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+const paths = {
+  src: path.join(__dirname, "src"),
+  dist: path.join(__dirname, "dist")
+};
+
 var _prod = process.env.NODE_ENV == 'production';
 
 var cssRule = {
@@ -53,17 +58,68 @@ var cssRule = {
 
 var that = {
   entry: {
-      index: './app/index/index.js',
-      another: './app/another/index.js',
-      vendor: [
-          'react',
-          'react-dom'
-      ]
+      index: path.join(paths.src,'entry/index/index.js'),
+      another: path.join(paths.src,'entry/another/index.js')
+    //   vendor: [
+    //       'react',
+    //       'react-dom'
+    //   ]
   },
 
   resolve: {
       alias: {
-          "comp": path.resolve(__dirname,"components")
+          "comp": path.resolve(__dirname,"src/components"),
+          "common": path.resolve(__dirname,"src/common"),
+          "async": path.resolve(__dirname,"src/async")
+      }
+  },
+
+  optimization: {
+      /**
+       * 设置chunks分割的规则。通常用来做code-splitting
+       * @type {Object}
+       */
+      splitChunks: {
+          //默认minSize是30KB。也就是说，生成的每一个chunk至少得是30KB。
+          //如果生成的chunk小于30KB, 就算你在cacheGroups里设置了commons和async的提取，也不会提取公共的。
+          //此时，你可以看到index和another里对code-splitting都各自生成了一套代码; detail和list里对dynamic-common
+          //也各自生成了一套代码。因为拆分过多会造成更多的请求，所以故做此minSize限制。
+          //
+          //实际过程中，代码量肯定很多，不会小于30KB。此处设置成1是为了测试。
+          minSize: 1,
+          cacheGroups: {
+              //将用到的package都合并到vendors
+              vendors: {
+                  test: /[\\/]node_modules[\\/]/i,
+                  name: "vendors",
+                  chunks: "all",
+                  priority: 0
+              },
+              //将entry points的公共代码提取到commons中
+              commons: {
+                  name: 'commons',
+                  chunks: 'initial',
+                  priority: -1
+              },
+              /**
+               * 将dynamic导入的js的公共部分提取到一起
+                 这块设置与否都不会有所影响。因为splitChunks.cacheGroups.default默认设置是：
+                   default: {
+                       minChunks: 2,
+                       priority: -20,
+                       reuseExistingChunk: true
+                   }
+                   chunks是继承的splitChunks.chunks，‘async’
+               */
+            //   async: {
+            //       //name: 'async', 如果指定name，则import引入的module都会合并到async.[chunkhash].js
+            //       chunks: 'async',
+            //       priority: -2
+            //   }
+          }
+      },
+      runtimeChunk: {
+          name: "vendors"
       }
   },
 
@@ -110,33 +166,33 @@ var that = {
        //多页应用实例 MPA
     //    new HtmlWebpackPlugin({
     //        chunks: ['runtime','vendor','index'],
-    //        template: './app/index.tmpl.html',
+    //        template: path.join(paths.src,'index.tmpl.html'),
     //        filename: 'index.html'
     //    }),
     //    new HtmlWebpackPlugin({
     //        chunks: ['runtime','vendor','another'],
-    //        template: './app/another.tmpl.html',
+    //        template: path.join(paths.src,'another.tmpl.html'),
     //        filename: 'another.html'
     //    }),
        //单页应用 SPA
        new HtmlWebpackPlugin({
-           template: './app/index.spa.tmpl.html',
+           template: path.join(paths.src,'index.spa.tmpl.html'),
            filename: 'index.html',
            minify: _prod? {
                 removeComments: true,
                 collapseWhitespace: true
            }: false
-       }),
-       //将entry中声明的vendor提取到单独的vendor文件中
-       new webpack.optimize.CommonsChunkPlugin({
-           name: 'vendor',
-           minChunks: Infinity
-       }),
-       //将index.js和another-module.js里公共的部分，提取到runtime.bundle.js
-       new webpack.optimize.CommonsChunkPlugin({
-           name: 'runtime', // Specify the common bundle's name.
-           minChunks: Infinity
        })
+       //将entry中声明的vendor提取到单独的vendor文件中
+    //    new webpack.optimize.CommonsChunkPlugin({
+    //        name: 'vendor',
+    //        minChunks: Infinity
+    //    }),
+       //将index.js和another-module.js里公共的部分，提取到runtime.bundle.js
+    //    new webpack.optimize.CommonsChunkPlugin({
+    //        name: 'runtime', // Specify the common bundle's name.
+    //        minChunks: Infinity
+    //    })
        //提取entry文件的公共部分
     //    new webpack.optimize.CommonsChunkPlugin({
     //        name: 'common'

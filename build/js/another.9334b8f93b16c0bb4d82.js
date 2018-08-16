@@ -1,2 +1,0 @@
-/*! 版权所有 zmrdlb */
-webpackJsonp([3],{175:function(n,t,e){"use strict";document.getElementById("lazyprint").onclick=function(n){return e.e(0).then(e.bind(null,177)).then(function(n){(0,n.default)()})}}},[175]);

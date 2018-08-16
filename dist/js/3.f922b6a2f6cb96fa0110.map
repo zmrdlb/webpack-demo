@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./src/async/detail/index.js"],"names":["__webpack_require__","default"],"mappings":";2FAIA,oDAFAA,EAAA,MAEAC,SAAQ","file":"js/3.f922b6a2f6cb96fa0110.js","sourcesContent":["//import ('async/dynamic-common').done(module => module.default('detail'));\n\nimport Dynamic from 'async/dynamic-common';\n\nDynamic('detail');\n"],"sourceRoot":""}
