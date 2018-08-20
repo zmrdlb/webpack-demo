@@ -1,4 +1,3 @@
-/*! 版权所有 zmrdlb */
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[0],{
 
 /***/ "./src/async/dynamic-common.js":

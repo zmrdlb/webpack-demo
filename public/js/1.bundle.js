@@ -1,4 +1,3 @@
-/*! 版权所有 zmrdlb */
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[1],{
 
 /***/ "./src/async/detail/index.js":
