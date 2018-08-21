@@ -11,8 +11,19 @@ console.log('dynamic-common.js加载进来了');
  */
 import path from 'path';
 
+import styles from './dynamic-common.less';
+
+console.log(styles);
+
 console.log(path.join(__dirname,'dynamic-common'));
 
+var container = document.createElement('div');
+container.classList.add(styles.dynamicCommon);
+document.body.appendChild(container);
+
 export default function(name){
-    console.log(name+'调用了dynamic-common');
+    var content = `<span class="${styles[name]}">${name}调用了dynamic-common</span>`;
+    var item = document.createElement('div');
+    item.innerHTML = content;
+    container.appendChild(item);
 }

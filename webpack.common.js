@@ -25,10 +25,14 @@ module.exports = env => {
               _prod? MiniCssExtractPlugin.loader: "style-loader",
               {
                   loader: "css-loader",
-                  // 如果不使用less-loader,并且使用局部css声明使用。如果使用less-loader，用这个功能有问题
-                //   options: {
-                //       modules: true
-                //   }
+                  options: {
+                      // 如果不使用less-loader,并且使用局部css声明使用。如果使用less-loader，用这个功能有问题
+                      //modules: true
+                      //将类名转化为驼峰，并且删除原来的命名
+                      camelCase: 'only',
+                      //development模式下，添加sourceMap，编译调试
+                      sourceMap: !_prod
+                  }
               },
               "postcss-loader", //postcss: http://postcss.org/ 使用js翻译css的工具
               "less-loader"
