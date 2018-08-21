@@ -24,7 +24,7 @@ webpack学习使用。有的学习总结直接写在了代码里了。
 
 - npm run buildNodeEnv: 这里面设置了`cross-env NODE_ENV=production PLATFORM=web`, 只有设置这个，在webpack.config.js中执行结果才是`process.env.NODE_ENV == 'production'`。
 - npm run build: 使用[webpack官方环境变量设置](https://webpack.docschina.org/guides/environment-variables/)。在这里设置`--env.NODE_ENV=production`，但结果`process.env.NODE_ENV != 'production`
-- [webpack.DefinePlugin](https://webpack.docschina.org/plugins/define-plugin/): 这个插件是设置一个全局变量，这个全局变量是在代码里面访问，而不是在webpack.config.js中访问。所以查看webpack.common.js中此插件的使用，虽然设置了`'process.env.NODE_ENV': JSON.stringify(_prod? 'production': 'development')`, 但是运行npm start后，在代码里面可以访问到值，但是在webpack.common.js中打印出来的process.env.NODE_ENV的值是undefined
+- [webpack.DefinePlugin](https://webpack.docschina.org/plugins/define-plugin/): 这个插件是设置一个全局变量，这个全局变量是在代码里面访问，而不是在webpack.config.js中访问。所以查看webpack.common.js中此插件的使用，虽然设置了`'process.env.NODE_ENV': JSON.stringify(_prod? 'production': 'development')`, 但是运行npm start后，在代码里面可以访问到值，但是在webpack.common.js中打印出来的process.env.NODE_ENV的值是undefined。不过如果是设置在代码中可访问的`process.env.NODE_ENV`的值，可以不用再声明使用`webpack.DefinePlugin`了，因为此值默认由`optimization.nodeEnv`使用`webpack.DefinePlugin`设置，值取自`mode`。只要设置了`mode`即可。
 
 # 核心概念
 
