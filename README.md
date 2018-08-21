@@ -75,3 +75,7 @@ runtimeChunk的选项说明：
 - true: 为每一个entry point都生成了一个runtime文件，命名规则同`runtimechunk~${entrypoint.name}`
 - 'single': 将所有entry point的runtime都提取到一个文件runtime.js中
 - 'multiple': 同true
+
+# analyze
+
+对生成的stat.json进行性能分析，[官方工具](https://webpack.github.io/analyse/)
