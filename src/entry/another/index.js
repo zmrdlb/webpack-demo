@@ -9,3 +9,5 @@ document.getElementById('lazyprint').onclick = e => import(/* webpackChunkName: 
     var print = module.default;
     print();
 });
+
+console.log(`process.env.NODE_ENV的值是${process.env.NODE_ENV}`);

@@ -14,10 +14,16 @@ module.exports = env => {
         output: {
             path: path.resolve(__dirname,"dist"),
             filename: "js/[name].[chunkhash].js",
-            chunkFilename: 'js/[name].[chunkhash].js',
+            chunkFilename: 'js/[id].[chunkhash].js',
             sourceMapFilename: "js/[name].[chunkhash].map",
+            /**
+             * publicPath，根据简单的结果进行理解
+             * 按照path以及其他设置, 资源分别放在dist下的: js, css, image, font等文件夹中
+             * 那么当发布时，根目录设置为dist，那么访问页面index.html的时候，
+             * 上面的assets资源的访问路径是 /js/...
+             * 所以publicPath为'/'
+             */
             publicPath: '/'
-            //pathinfo: false //关闭在文件中生成路径信息
         },
         optimization: {
             minimizer: [
@@ -28,10 +34,6 @@ module.exports = env => {
             new CleanWebpackPlugin(['dist']),
             new webpack.HashedModuleIdsPlugin(),
             new webpack.BannerPlugin('版权所有 zmrdlb'), //给打包后的代码添加版权声明
-            // 原来在npm build中添加了：cross-env NODE_ENV=production PLATFORM=web
-            // new webpack.DefinePlugin({
-            //     'process.env.NODE_ENV': JSON.stringify('production') //'"production"'
-            // }),
             // new webpack.optimize.UglifyJsPlugin({
             //     compress: {
             //         warnings: false

@@ -19,6 +19,9 @@ module.exports = env => {
 
     console.log(_prod? 'production': 'development');
 
+    //这里取不到，是development
+    console.log(`process.env.NODE_ENV的值是${process.env.NODE_ENV}`);
+
     var cssRule = {
           test: /\.less$/,
           use: [ //链式调用从下到上
@@ -102,7 +105,7 @@ module.exports = env => {
               cacheGroups: {
                   //将用到的package都合并到vendors
                   vendors: {
-                      test: /[\\/]node_modules[\\/]/i,
+                      test: /[\\/]node_modules[\\/]/i, //匹配 /node_modules/
                       name: "vendors",
                       chunks: "all",
                       priority: 0
@@ -196,6 +199,10 @@ module.exports = env => {
                 filename: _prod? 'css/[name].[contenthash].css': 'css/[name].css',
                 chunkFilename: _prod? 'css/[id].[contenthash].css': 'css/[id].css',
            })
+           // process.env.NODE_ENV的值，默认由optimization.nodeEnv设置，取自mode值
+        //    new webpack.DefinePlugin({
+        //        'process.env.NODE_ENV': JSON.stringify(_prod? 'production': 'development') //'"production"'
+        //    })
        ]
     };
 

@@ -10,6 +10,10 @@ module.exports = env => {
       output: {
         path: path.resolve(__dirname,"public"), //打包后的文件存放的地方
         filename: "js/[name].bundle.js", //entry point的文件名
+        /**
+         * 默认也会用[id]替换[name]
+         * 但是如果import时用webpackChunkName指定了name，那么优先使用[name]
+         */
         chunkFilename: 'js/[name].bundle.js', //非entry point的文件名称
         publicPath: '/'
       },
