@@ -7,6 +7,7 @@ import {cube} from 'common/tree-shaking';
 import CodeSplitting from 'common/code-splitting';
 import path from 'path';
 import 'common/hmr';
+import './sw-register';
 
 import "./index.less";
 

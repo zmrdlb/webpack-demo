@@ -2,6 +2,8 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// const ChunkRenamePlugin = require("chunk-rename-webpack-plugin");
+const {GenerateSW,InjectManifest} = require('workbox-webpack-plugin');
 
 const paths = {
   src: path.join(__dirname, "src"),
@@ -116,6 +118,7 @@ module.exports = env => {
                       chunks: 'initial',
                       priority: -1
                   }
+
                   /**
                    * 将dynamic导入的js的公共部分提取到一起
                      这块设置与否都不会有所影响。因为splitChunks.cacheGroups.default默认设置是：
@@ -175,6 +178,12 @@ module.exports = env => {
         * 插件并不直接操作单个文件，它直接对整个构建过程起作用。
         */
        plugins: [
+           //注入自己的sw.js
+           new InjectManifest({
+               swSrc: path.join(paths.src,'entry/sw.js'),
+               swDest: 'sw.js',
+               chunks: ['runtime','commons','vendors']
+           }),
            //多页应用实例 MPA
         //    new HtmlWebpackPlugin({
         //        chunks: ['runtime','vendor','index'],
@@ -190,19 +199,28 @@ module.exports = env => {
            new HtmlWebpackPlugin({
                template: path.join(paths.src,'index.spa.tmpl.html'),
                filename: 'index.html',
+               //excludeChunks: ['sw'],
                minify: _prod? {
                     removeComments: true,
                     collapseWhitespace: true
                }: false
            }),
+
+           //sw是个特别的存在，此文件单独命名
+        //    new ChunkRenamePlugin({
+        //         sw: "js/sw.js"
+        //    }),
+
            new MiniCssExtractPlugin({
                 filename: _prod? 'css/[name].[contenthash].css': 'css/[name].css',
                 chunkFilename: _prod? 'css/[id].[contenthash].css': 'css/[id].css',
+           }),
+
+           new webpack.DefinePlugin({
+               // process.env.NODE_ENV的值，默认由optimization.nodeEnv设置，取自mode值
+               //'process.env.NODE_ENV': JSON.stringify(_prod? 'production': 'development') //'"production"'
+               'Build_Version': Date.now()
            })
-           // process.env.NODE_ENV的值，默认由optimization.nodeEnv设置，取自mode值
-        //    new webpack.DefinePlugin({
-        //        'process.env.NODE_ENV': JSON.stringify(_prod? 'production': 'development') //'"production"'
-        //    })
        ]
     };
 
