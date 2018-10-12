@@ -5,6 +5,7 @@ webpack学习使用。有的学习总结直接写在了代码里了。
 
 - master：跟踪研究webpack最新版本
 - webpack-demo-3-version: webpack version is 3
+- webpack-demo-pwa: 基于webpack构建pwa应用
 
 # .babelrc
 
@@ -79,3 +80,21 @@ runtimeChunk的选项说明：
 # analyze
 
 对生成的stat.json进行性能分析，[官方工具](https://webpack.github.io/analyse/)
+
+# PWA
+
+progressive web app, 在分支webpack-demo-pwa实现
+
+## workbox
+
+### workbox.cacheableResponse.Plugin
+  - statuses必须填写，虽然官方说有默认值，但是不填写取到的是undefined。
+  - headers针对的是Response headers。
+### [workbox.routing.registerRoute](https://developers.google.com/web/tools/workbox/modules/workbox-routing)
+  - 默认情况下，拦截的是GET请求。如果想拦截其他method，则需要特别指出。
+  - 声明的顺序很重要。
+  - 正则表达式默认匹配same-origin，如果想匹配cross-origin，则需要在声明正则时指出beginning of URL。如：
+  ```
+  new RegExp('https://cdn.third-party-site.com.*/styles/.*\.css')
+  ```
+
