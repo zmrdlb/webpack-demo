@@ -44,32 +44,26 @@ workbox.core.setCacheNameDetails({
 });
 
 //precaching
+const precacheList = ['/index.html','/404.html'];
 
-self.__precacheManifest.push({
-    url: '/',
-    revision: version
-});
+precacheList.forEach((url,index) => {
+    self.__precacheManifest.push({
+        url: url,
+        revision: version+index
+    });
+})
+
 workbox.precaching.precacheAndRoute(self.__precacheManifest,{
     //忽略request url中的search parameters
     ignoreUrlParametersMatching: [/.*/]
 });
 
-/**
- * 这里说明一些总结：
- *
- * 1. workbox.cacheableResponse.Plugin：1）statuses必须填写，虽然官方说有
- * 默认值，但是不填写取到的是undefined。2）headers针对的是Response headers
- * 2. workbox.routing.registerRoute：默认情况下，拦截的是GET请求。如果想拦截
- * 其他method，则需要特别指出
- *
- * @type {[type]}
- */
-
 //runtime cache
 
+//默认只匹配同域
 workbox.routing.registerRoute(
     // Cache Js files
-    /\.(?:js)$/,
+    /\.(?:js)((#|\?)[^\.]*)?$/,
     workbox.strategies.networkFirst({
         cacheName: baseCacheName+'-js-cache-'+version,
         plugins: [
@@ -85,6 +79,26 @@ workbox.routing.registerRoute(
         ]
     })
 );
+
+//对跨域存储进行测试。页面加载后可运行 fetch('http://code.jquery.com/jquery-latest.js') 测试
+// workbox.routing.registerRoute(
+//     // Cache Js files
+//     new RegExp('http://code.jquery.com.*\.js((#|\\?)[^\\.]*)?$'),
+//     workbox.strategies.networkFirst({
+//         cacheName: baseCacheName+'-js-cache-'+version,
+//         plugins: [
+//             new workbox.expiration.Plugin({
+//                 // Cache for a maximum of a week
+//                 maxAgeSeconds: 30 * 24 * 60 * 60,
+//                 purgeOnQuotaError: true
+//             }),
+//             new workbox.cacheableResponse.Plugin({
+//                 //默认是[0,200]
+//                 statuses: [0, 200, 304]
+//             })
+//         ]
+//     })
+// );
 
 // const cacheable = new workbox.cacheableResponse.CacheableResponse({
 //   statuses: [0, 200],
@@ -113,7 +127,7 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
     // Cache CSS files
-    /\.(?:css)$/,
+    /\.(?:css)((#|\?)[^\.]*)?$/,
     // Use cache but update in the background ASAP
     workbox.strategies.staleWhileRevalidate({
     // Use a custom cache name
@@ -133,7 +147,7 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
     // Cache image files
-    /\.(?:png|gif|jpg|jpeg|svg)$/,
+    /\.(?:png|gif|jpg|jpeg|svg)((#|\?)[^\.]*)?$/,
     // Use the cache if it's available
     workbox.strategies.cacheFirst({
         // Use a custom cache name
@@ -154,7 +168,26 @@ workbox.routing.registerRoute(
 );
 
 //https://codelabs.developers.google.com/codelabs/workbox-lab/#8
-//
+
+//注意，以下关于registerNavigationRoute的两种测试，如果符合重定向到404.html的url，
+//则也不会再在cache里面重复存储。这个特性对于spa页面非常有用，可以防止重复缓存
+//特别说明，对于webpack构建的页面来说。/,/XXX这种没有后缀的navigator访问（目标是document页面），
+//都会重定向到index.html
+
+//除了访问/返回正常，访问其他都跳转到404页面，即使/another.html本身存在
+// workbox.routing.registerNavigationRoute('/404.html');
+
+//这里添加了黑名单，访问/another.html，会返回真正的another.html，并缓存在cache里
+//其他除了访问/，/another.html返回正常，其他都跳转到404
+workbox.routing.registerNavigationRoute('/404.html', {
+    // whitelist: [
+    //     new RegExp('/another$')
+    // ],
+    blacklist: [
+        new RegExp('/another\.html$')
+    ]
+});
+
 const pageHandler = workbox.strategies.networkFirst({
     cacheName: baseCacheName+'-page-cache-'+version,
     matchOptions: {
@@ -176,8 +209,10 @@ const pageHandler = workbox.strategies.networkFirst({
     ]
 });
 
+//https://developers.google.com/web/tools/workbox/modules/workbox-routing
 workbox.routing.registerRoute(
-    //匹配当前域名下的，不带后缀，或带.html也url
+    //匹配当前域名下的，不带后缀，或带.html的url
+    //默认匹配当前域，可以不用显示声明location.origin
     new RegExp('^'+location.origin+'/(?!\\.)([\\w-/]+(\\.html)?)?((#|\\?)[^\\.]*)?$'),
     args => {
         console.log('page',args.url);

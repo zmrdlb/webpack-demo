@@ -213,6 +213,26 @@ module.exports = env => {
                     collapseWhitespace: true
                }: false
            }),
+           new HtmlWebpackPlugin({
+               template: path.join(paths.src,'404.tmpl.html'),
+               filename: '404.html',
+               chunks: [],
+               //excludeChunks: ['sw'],
+               minify: _prod? {
+                    removeComments: true,
+                    collapseWhitespace: true
+               }: false
+           }),
+           new HtmlWebpackPlugin({
+               template: path.join(paths.src,'another.spa.tmpl.html'),
+               filename: 'another.html',
+               chunks: [],
+               //excludeChunks: ['sw'],
+               minify: _prod? {
+                    removeComments: true,
+                    collapseWhitespace: true
+               }: false
+           }),
 
            //sw是个特别的存在，此文件单独命名
         //    new ChunkRenamePlugin({
