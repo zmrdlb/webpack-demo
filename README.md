@@ -97,4 +97,6 @@ progressive web app, 在分支webpack-demo-pwa实现
   ```
   new RegExp('https://cdn.third-party-site.com.*/styles/.*\.css')
   ```
+### [NavigationRoute](https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.routing.NavigationRoute)
 
+workbox.routing.registerNavigationRoute 方法实际上实例化了NavigationRoute。NavigationRoute只对mode是`navigate`的请求有用，即请求的目标是document。NavigationRoute对spa非常有用，因为无论你访问什么样的页面route，最终都会重定向到index.html，然后里面的js再控制渲染响应的dom。设置了以后，如访问/,/another,/other/one，都指向index.html，并且符合这些页面都不会再在cache里面缓存一份重复的数据。具体说明设置请查看src/entry/sw.js里面的设置。
