@@ -182,18 +182,26 @@ module.exports = env => {
            new InjectManifest({
                swSrc: path.join(paths.src,'entry/sw.js'),
                swDest: 'sw.js',
-               chunks: ['runtime','commons','vendors']
+               chunks: ['runtime','commons','vendors','index','another']
            }),
            //多页应用实例 MPA
         //    new HtmlWebpackPlugin({
-        //        chunks: ['runtime','vendor','index'],
+        //        chunks: ['runtime','commons','vendors','index'],
         //        template: path.join(paths.src,'index.tmpl.html'),
-        //        filename: 'index.html'
+        //        filename: 'index.html',
+        //        minify: _prod? {
+        //             removeComments: true,
+        //             collapseWhitespace: true
+        //        }: false
         //    }),
         //    new HtmlWebpackPlugin({
-        //        chunks: ['runtime','vendor','another'],
+        //        chunks: ['runtime','commons','vendors','another'],
         //        template: path.join(paths.src,'another.tmpl.html'),
-        //        filename: 'another.html'
+        //        filename: 'another.html',
+        //        minify: _prod? {
+        //             removeComments: true,
+        //             collapseWhitespace: true
+        //        }: false
         //    }),
            //单页应用 SPA
            new HtmlWebpackPlugin({
