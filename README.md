@@ -104,3 +104,7 @@ workbox.routing.registerNavigationRoute 方法实际上实例化了NavigationRou
 ### [workbox.strategies](https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.strategies)
 
 - matchOptions: 同[cache.match](https://developer.mozilla.org/zh-CN/docs/Web/API/Cache/match)里面的options。但是注意的是，这个在workbox中仅仅被用在cache匹配。也就是说，如果配置了ignoreSearch:true，当cache里面已经有了一份/path1的缓存，那么在offline时访问/path1, /path1#hash, /path1?querystring ，都会返回/path1的缓存。但是在online时，再次进行访问上述两个url，则在cache里面分别会put一份缓存，即总共3份一模一样的。
+
+### workbox缓存机制问题
+
+workbox在调用cache.put时，request.url是full。比如，设置了ignoreSearch:true，访问another.html，cache里面存了一份；再访问another.html?querystring，虽然response没变，但还是会在cache里面再存一份。解决方案：暂时只能自己写handler来控制responseWith以及cache.put逻辑。但是个人想用workbox.expiration的逻辑，尤其是purgeOnQuotaError的配置，而workbox并没有对此开放更多说明，自己写需要大量的研究以及代码量。
