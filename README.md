@@ -100,3 +100,7 @@ progressive web app, 在分支webpack-demo-pwa实现
 ### [NavigationRoute](https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.routing.NavigationRoute)
 
 workbox.routing.registerNavigationRoute 方法实际上实例化了NavigationRoute。NavigationRoute只对mode是`navigate`的请求有用，即请求的目标是document。NavigationRoute对spa非常有用，因为无论你访问什么样的页面route，最终都会重定向到index.html，然后里面的js再控制渲染响应的dom。设置了以后，如访问/,/another,/other/one，都指向index.html，并且符合这些页面都不会再在cache里面缓存一份重复的数据。具体说明设置请查看src/entry/sw.js里面的设置。
+
+### [workbox.strategies](https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.strategies)
+
+- matchOptions: 同[cache.match](https://developer.mozilla.org/zh-CN/docs/Web/API/Cache/match)里面的options。但是注意的是，这个在workbox中仅仅被用在cache匹配。也就是说，如果配置了ignoreSearch:true，当cache里面已经有了一份/path1的缓存，那么在offline时访问/path1, /path1#hash, /path1?querystring ，都会返回/path1的缓存。但是在online时，再次进行访问上述两个url，则在cache里面分别会put一份缓存，即总共3份一模一样的。
