@@ -169,22 +169,37 @@ workbox.routing.registerRoute(
 
 //https://codelabs.developers.google.com/codelabs/workbox-lab/#8
 
-//注意，以下关于registerNavigationRoute的两种测试，如果符合重定向到404.html的url，
-//则也不会再在cache里面重复存储。这个特性对于spa页面非常有用，可以防止重复缓存
-//特别说明，对于webpack构建的页面来说。/,/XXX这种没有后缀的navigator访问（目标是document页面），
+//说明：
+//1. 对于webpack构建的页面来说。/,/XXX这种没有后缀的navigation requests（目标是document页面），
 //都会重定向到index.html
+//2. 以下关于registerNavigationRoute的两种测试，如果符合重定向到404.html的url，
+//则也不会再在cache里面重复存储。这个特性对于spa页面非常有用，可以防止重复缓存。(经测试，
+//如果不设置registerNavigationRoute，如访问/onepage, /twopage等，都会在cache里面各自缓存一份)
+
 
 //除了访问/返回正常，访问其他都跳转到404页面，即使/another.html本身存在
 // workbox.routing.registerNavigationRoute('/404.html');
 
 //这里添加了黑名单，访问/another.html，会返回真正的another.html，并缓存在cache里
 //其他除了访问/，/another.html返回正常，其他都跳转到404
-workbox.routing.registerNavigationRoute('/404.html', {
+// workbox.routing.registerNavigationRoute('/404.html', {
+//     // whitelist: [
+//     //     new RegExp('/another\.html')
+//     // ],
+//     blacklist: [
+//         new RegExp('/another\.html')
+//     ]
+// });
+
+//上述两者是为了进行测试。
+//现在进行真正的配置。
+workbox.routing.registerNavigationRoute('/index.html', {
     // whitelist: [
-    //     new RegExp('/another$')
+    //     new RegExp('/another\.html')
     // ],
     blacklist: [
-        new RegExp('/another\.html$')
+        new RegExp('/another\.html'),
+        new RegExp('/404\.html')
     ]
 });
 
@@ -211,9 +226,10 @@ const pageHandler = workbox.strategies.networkFirst({
 
 //https://developers.google.com/web/tools/workbox/modules/workbox-routing
 workbox.routing.registerRoute(
-    //匹配当前域名下的，不带后缀，或带.html的url
+    //匹配当前域名下的，不带后缀，或带.html的url: new RegExp('^'+location.origin+'/(?!\\.)([\\w-/]+(\\.html)?)?((#|\\?)[^\\.]*)?$'),
     //默认匹配当前域，可以不用显示声明location.origin
-    new RegExp('^'+location.origin+'/(?!\\.)([\\w-/]+(\\.html)?)?((#|\\?)[^\\.]*)?$'),
+    //匹配当前域名下的，带.html的url
+    new RegExp('^'+location.origin+'/(?!\\.)([\\w-/]+\\.html)?((#|\\?)[^\\.]*)?$'),
     args => {
         console.log('page',args.url);
         return pageHandler.handle(args);
