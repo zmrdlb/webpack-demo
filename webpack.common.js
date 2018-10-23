@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const ChunkRenamePlugin = require("chunk-rename-webpack-plugin");
 const {GenerateSW,InjectManifest} = require('workbox-webpack-plugin');
 
@@ -180,6 +181,7 @@ module.exports = env => {
        plugins: [
            //注入自己的sw.js
            new InjectManifest({
+            //    importWorkboxFrom: 'local',
                swSrc: path.join(paths.src,'entry/sw.js'),
                swDest: 'sw.js',
                chunks: ['runtime','commons','vendors','index','another']
@@ -248,7 +250,12 @@ module.exports = env => {
                // process.env.NODE_ENV的值，默认由optimization.nodeEnv设置，取自mode值
                //'process.env.NODE_ENV': JSON.stringify(_prod? 'production': 'development') //'"production"'
                'Build_Version': Date.now()
-           })
+           }),
+
+           new CopyWebpackPlugin([
+               {from: path.join(paths.src,'manifest.json')},
+               {from: path.join(paths.src,'image'), to: 'image'}
+           ])
        ]
     };
 

@@ -55,6 +55,8 @@ document.getElementById('lazyprint').onclick = e => __webpack_require__.e(/* imp
     print();
 });
 
+console.log(`process.env.NODE_ENV的值是${"production"}`);
+
 /***/ }),
 
 /***/ "R7XS":
@@ -79,6 +81,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var _index_less__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("16xR");
 /* harmony import */ var _index_less__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_index_less__WEBPACK_IMPORTED_MODULE_9__);
+
 
 
 
@@ -227,4 +230,4 @@ console.log('code-splitting.js加载进来了');
 /***/ })
 
 }]);
-//# sourceMappingURL=commons.47039bd746598930acb9.map
+//# sourceMappingURL=commons.466da69519638174ea36.map

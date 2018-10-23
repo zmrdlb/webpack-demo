@@ -1,3 +1,5 @@
+importScripts("/precache-manifest.5b6e6df5321d491b4d310033e7d464fe.js", "https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js");
+
 console.log('Hello from sw.js');
 console.log(self);
 var baseCacheName = 'zmr-pwa-demo',
@@ -167,28 +169,6 @@ workbox.routing.registerRoute(
     })
 );
 
-workbox.routing.registerRoute(
-    // Cache image files
-    /\.(?:ttf)((#|\?)[^\.]*)?$/,
-    // Use the cache if it's available
-    workbox.strategies.cacheFirst({
-        // Use a custom cache name
-        cacheName: baseCacheName+'-font-cache-'+version,
-        plugins: [
-            new workbox.expiration.Plugin({
-                // Cache only 20 fonts
-                maxEntries: 8,
-                // Cache for a maximum of a week
-                maxAgeSeconds: 30 * 24 * 60 * 60,
-                purgeOnQuotaError: true
-            }),
-            new workbox.cacheableResponse.Plugin({
-                statuses: [200, 304] //默认是[200]
-            })
-        ]
-    })
-);
-
 //https://codelabs.developers.google.com/codelabs/workbox-lab/#8
 
 //说明：
@@ -221,8 +201,7 @@ workbox.routing.registerNavigationRoute('/index.html', {
     // ],
     blacklist: [
         new RegExp('/another\.html'),
-        new RegExp('/404\.html'),
-        new RegExp('\.json')
+        new RegExp('/404\.html')
     ]
 });
 
@@ -255,11 +234,7 @@ workbox.routing.registerRoute(
     new RegExp('^'+location.origin+'/(?!\\.)([\\w-/]+\\.html)?((#|\\?)[^\\.]*)?$'),
     args => {
         console.log('page',args.url);
-        return pageHandler.handle(args).then(response => {
-            if(!response){
-                return caches.match('/404.html')
-            }
-            return response;
-        })
+        return pageHandler.handle(args);
     }
 );
+

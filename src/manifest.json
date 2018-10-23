@@ -1,0 +1,21 @@
+{
+  "short_name": "PWA",
+  "name": "PWA Demo",
+  "icons": [
+    {
+      "src": "/image/icons-manifest-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/image/icons-manifest-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#f19999",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#3367D6"
+}
