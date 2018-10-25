@@ -216,13 +216,13 @@ workbox.routing.registerRoute(
 //上述两者是为了进行测试。
 //现在进行真正的配置。
 workbox.routing.registerNavigationRoute('/index.html', {
-    // whitelist: [
-    //     new RegExp('/another\.html')
-    // ],
+    whitelist: [
+        //匹配没有后缀的navigation
+        new RegExp('^'+location.origin+'/(?!\\.)([\\w-/]+)?((#|\\?)[^\\.]*)?$')
+    ],
     blacklist: [
-        new RegExp('/another\.html'),
-        new RegExp('/404\.html'),
-        new RegExp('\.json')
+        // new RegExp('/another\.html'),
+        // new RegExp('/404\.html')
     ]
 });
 
@@ -254,7 +254,6 @@ workbox.routing.registerRoute(
     //匹配当前域名下的，带.html的url
     new RegExp('^'+location.origin+'/(?!\\.)([\\w-/]+\\.html)?((#|\\?)[^\\.]*)?$'),
     args => {
-        console.log('page',args.url);
         return pageHandler.handle(args).then(response => {
             if(!response){
                 return caches.match('/404.html')
