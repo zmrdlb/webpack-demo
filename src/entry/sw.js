@@ -44,7 +44,7 @@ workbox.core.setCacheNameDetails({
 });
 
 //precaching
-const precacheList = ['/index.html','/404.html'];
+const precacheList = ['/index.html','/404.html', '/offline.html'];
 
 precacheList.forEach((url,index) => {
     self.__precacheManifest.push({
@@ -256,7 +256,9 @@ workbox.routing.registerRoute(
     args => {
         return pageHandler.handle(args).then(response => {
             if(!response){
-                return caches.match('/404.html')
+                return caches.match('/offline.html');
+            }else if (response.status === 404) {
+                return caches.match('/404.html');
             }
             return response;
         })

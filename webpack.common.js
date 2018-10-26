@@ -219,7 +219,15 @@ module.exports = env => {
                template: path.join(paths.src,'404.tmpl.html'),
                filename: '404.html',
                chunks: [],
-               //excludeChunks: ['sw'],
+               minify: _prod? {
+                    removeComments: true,
+                    collapseWhitespace: true
+               }: false
+           }),
+           new HtmlWebpackPlugin({
+               template: path.join(paths.src,'offline.tmpl.html'),
+               filename: 'offline.html',
+               chunks: [],
                minify: _prod? {
                     removeComments: true,
                     collapseWhitespace: true
@@ -229,7 +237,6 @@ module.exports = env => {
                template: path.join(paths.src,'another.spa.tmpl.html'),
                filename: 'another.html',
                chunks: [],
-               //excludeChunks: ['sw'],
                minify: _prod? {
                     removeComments: true,
                     collapseWhitespace: true
