@@ -9,13 +9,19 @@ webpack学习使用。有的学习总结直接写在了代码里了。
 
 # babel config
 
-在 babel.config.js 中配置
+在 babel.config.js 中配置。
+
+有时我们使用的API及语法，浏览器不支持。幸亏，babel 提供了很多 helper code, 根据配置及环境自动 polyfill，让我们无缝使用新的 js 语法。babel helper code 包括两部分：built-ins API，如 Promise, Map；babel helper，如对 Class 语法重写。
 
 ## [@babel/preset-env](http://babeljs.io/docs/en/babel-preset-env)
 
 - "useBuiltIns": 基于设置的环境（如 .browserslistrc），配置 @babel/preset-env 如何处理 polyfills。通过修改 test.js 并运行 npx babel test.js -o test.compile.js 来进行测试。为了测试结果只管，先将 babel.config.js 里面 @babel/plugin-transform-runtime 配置注释掉。更多说明请查看 test.js。
   - "entry": 在整个app里只使用一次 import "core-js" 和 import "regenerator-runtime/runtime"。根据环境，将 "core-js" 和 "regenerator-runtime/runtime" 所涉及到的单独的 module 都导入进来，并替换它们。就算代码里面实际只用到了 Promise 也会导入其他 module。
   - "usage": 根据环境，以及 test.js 里代码涉及到 polyfills 来导入所需的 module。
+  
+## [@babel/plugin-transform-runtime](https://babeljs.io/docs/en/babel-plugin-transform-runtime)
+
+一般情况下，babel helper code 是被内联注入的，这会造成全局环境污染，以及代码重复。该 plugin 便解决了这个问题，将内联注入的代码替换为独立的 module。
 
 # [browserslist](https://github.com/browserslist/browserslist)
 
