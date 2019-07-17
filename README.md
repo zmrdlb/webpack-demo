@@ -7,15 +7,22 @@ webpack学习使用。有的学习总结直接写在了代码里了。
 - webpack-demo-3-version: webpack version is 3
 - webpack-demo-pwa: 基于webpack构建pwa应用
 
-# .babelrc
+# babel config
 
-## [babel-preset-env](http://babeljs.io/docs/en/babel-preset-env)
+在 babel.config.js 中配置
 
-> 浏览器对比设置：["last 2 Chrome versions"]和["last 2 versions", "ie >= 8"]
+## [@babel/preset-env](http://babeljs.io/docs/en/babel-preset-env)
 
-- "targets.browsers": 使用了[browserslist](https://github.com/browserslist/browserslist)。默认配置是"> 0.5%, last 2 versions, Firefox ESR, not dead", 可设置"浏览器对比设置"来重新npm run build，对比dist/js中的文件大小。
+- "useBuiltIns": 基于设置的环境（如 .browserslistrc），配置 @babel/preset-env 如何处理 polyfills。通过修改 test.js 并运行 npx babel test.js -o test.compile.js 来进行测试。为了测试结果只管，先将 babel.config.js 里面 @babel/plugin-transform-runtime 配置注释掉。更多说明请查看 test.js。
+  - "entry": 在整个app里只使用一次 import "core-js" 和 import "regenerator-runtime/runtime"。根据环境，将 "core-js" 和 "regenerator-runtime/runtime" 所涉及到的单独的 module 都导入进来，并替换它们。就算代码里面实际只用到了 Promise 也会导入其他 module。
+  - "usage": 根据环境，以及 test.js 里代码涉及到 polyfills 来导入所需的 module。
 
-- "useBuiltIns": 设置为true时，将browsers设置为"浏览器对比设置", 重新编译，对比venders.js里面对polyfill引入的数量不同。
+# [browserslist](https://github.com/browserslist/browserslist)
+
+在 .browserslistrc 中配置。
+
+配置所支持的浏览器环境，默认配置是"> 0.5%, last 2 versions, Firefox ESR, not dead", 可在.browserslistrc中设置"浏览器对比设置"，编译test.js来测试。
+> 浏览器对比设置：["last 2 Chrome versions"]和["last 2 versions", "ie >= 8"]。在.browserslistrc中配置时，将数组中的每条数据去了,换行写即可。
 
 # package.json
 
