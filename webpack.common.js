@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const ChunkRenamePlugin = require("chunk-rename-webpack-plugin");
-const {GenerateSW,InjectManifest} = require('workbox-webpack-plugin');
 
 const paths = {
   src: path.join(__dirname, "src"),
@@ -150,13 +149,6 @@ module.exports = env => {
         * 插件并不直接操作单个文件，它直接对整个构建过程起作用。
         */
        plugins: [
-           //注入自己的sw.js
-           new InjectManifest({
-            //    importWorkboxFrom: 'local',
-               swSrc: path.join(paths.src,'entry/sw.js'),
-               swDest: 'sw.js',
-               chunks: ['runtime','commons','vendors','index','another']
-           }),
            //多页应用实例 MPA
         //    new HtmlWebpackPlugin({
         //        chunks: ['runtime','commons','vendors','index'],

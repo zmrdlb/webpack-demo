@@ -5,7 +5,6 @@ import {cube} from 'common/tree-shaking';
 import CodeSplitting from 'common/code-splitting';
 import path from 'path';
 import 'common/hmr';
-import './sw-register';
 
 import "./index.less";
 
@@ -24,12 +23,6 @@ ReactDOM.render(
     <div>
         <p>tree-shaking测试：{cube(5)}</p>
         <Greeter>Hello, ZMRDLB!</Greeter>
-        <p>
-            默认启用了 service worker 构建 pwa。如果想禁用，注释掉
-            <code>import './sw-register'</code> 及 webpack.common.js 中的 <code>new InjectManifest</code>
-            如果浏览器，如chrome已经安装了 service worker，请进入 <code>chrome://serviceworker-internals/</code>
-            将本页面相关的 service worker unRegister。
-        </p>
     </div>,
     document.getElementById('root')
 );
