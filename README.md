@@ -5,22 +5,40 @@ webpack学习使用。有的学习总结直接写在了代码里了。
 
 - master：跟踪研究webpack最新版本
 - webpack-demo-3-version: webpack version is 3
+- webpack-demo-pwa: 基于webpack构建pwa应用
 
-# .babelrc
+# babel config
 
-## [babel-preset-env](http://babeljs.io/docs/en/babel-preset-env)
+在 babel.config.js 中配置。
 
-> 浏览器对比设置：["last 2 Chrome versions"]和["last 2 versions", "ie >= 8"]
+有时我们使用的API及语法，浏览器不支持。幸亏，babel 提供了很多 helper code, 根据配置及环境自动 polyfill，让我们无缝使用新的 js 语法。babel helper code 包括两部分：built-ins API，如 Promise, Map；babel helper，如对 Class 语法重写。
 
-- "targets.browsers": 使用了[browserslist](https://github.com/browserslist/browserslist)。默认配置是"> 0.5%, last 2 versions, Firefox ESR, not dead", 可设置"浏览器对比设置"来重新npm run build，对比dist/js中的文件大小。
+## [@babel/preset-env](http://babeljs.io/docs/en/babel-preset-env)
 
-- "useBuiltIns": 设置为true时，将browsers设置为"浏览器对比设置", 重新编译，对比venders.js里面对polyfill引入的数量不同。
+- "useBuiltIns": 基于设置的环境（如 .browserslistrc），配置 @babel/preset-env 如何处理 polyfills。通过修改 test.js 并运行 npx babel test.js -o test.compile.js 来进行测试。为了测试结果只管，先将 babel.config.js 里面 @babel/plugin-transform-runtime 配置注释掉。更多说明请查看 test.js。
+  - "entry": 在整个app里只使用一次 import "core-js" 和 import "regenerator-runtime/runtime"。根据环境，将 "core-js" 和 "regenerator-runtime/runtime" 所涉及到的单独的 module 都导入进来，并替换它们。就算代码里面实际只用到了 Promise 也会导入其他 module。
+  - "usage": 根据环境，以及 test.js 里代码涉及到 polyfills 来导入所需的 module。
+  
+## [@babel/plugin-transform-runtime](https://babeljs.io/docs/en/babel-plugin-transform-runtime)
+
+一般情况下，babel helper code 是被内联注入的，这会造成全局环境污染，以及代码重复。该 plugin 便解决了这个问题，将内联注入的代码替换为独立的 module。
+
+# [browserslist](https://github.com/browserslist/browserslist)
+
+在 .browserslistrc 中配置。
+
+配置所支持的浏览器环境，默认配置是"> 0.5%, last 2 versions, Firefox ESR, not dead", 可在.browserslistrc中设置"浏览器对比设置"，编译test.js来测试。
+> 浏览器对比设置：["last 2 Chrome versions"]和["last 2 versions", "ie >= 8"]。在.browserslistrc中配置时，将数组中的每条数据去了,换行写即可。
 
 # package.json
 
 - [sideEffects](https://webpack.docschina.org/guides/tree-shaking/#mark-the-file-as-side-effect-free): 这个设置看文档就知道干啥了。但是有个注意的是，代码压缩了才能去除不需要的代码，所以npm run build在dist里面查看commons.js,才能够看出来。
-- npm run buildNodeEnv: 这里面设置了cross-env NODE_ENV=production PLATFORM=web, 只有设置这个，在webpack.config.js中执行结果才是process.env.NODE_ENV == 'production'。
-- npm run build: 使用[webpack官方环境变量设置](https://webpack.docschina.org/guides/environment-variables/)。在这里设置--env.NODE_ENV=production，但结果process.env.NODE_ENV != 'production
+
+# 获取环境变量
+
+- npm run buildNodeEnv: 这里面设置了`cross-env NODE_ENV=production PLATFORM=web`, 只有设置这个，在webpack.config.js中执行结果才是`process.env.NODE_ENV == 'production'`。
+- npm run build: 使用[webpack官方环境变量设置](https://webpack.docschina.org/guides/environment-variables/)。在这里设置`--env.NODE_ENV=production`，但结果`process.env.NODE_ENV != 'production`
+- [webpack.DefinePlugin](https://webpack.docschina.org/plugins/define-plugin/): 这个插件是设置一个全局变量，这个全局变量是在代码里面访问，而不是在webpack.config.js中访问。所以查看webpack.common.js中此插件的使用，虽然设置了`'process.env.NODE_ENV': JSON.stringify(_prod? 'production': 'development')`, 但是运行npm start后，在代码里面可以访问到值，但是在webpack.common.js中打印出来的process.env.NODE_ENV的值是undefined。不过如果是设置在代码中可访问的`process.env.NODE_ENV`的值，可以不用再声明使用`webpack.DefinePlugin`了，因为此值默认由`optimization.nodeEnv`使用`webpack.DefinePlugin`设置，值取自`mode`。只要设置了`mode`即可。
 
 # 核心概念
 
@@ -71,3 +89,35 @@ runtimeChunk的选项说明：
 - true: 为每一个entry point都生成了一个runtime文件，命名规则同`runtimechunk~${entrypoint.name}`
 - 'single': 将所有entry point的runtime都提取到一个文件runtime.js中
 - 'multiple': 同true
+
+# analyze
+
+对生成的stat.json进行性能分析，[官方工具](https://webpack.github.io/analyse/)
+
+# PWA
+
+progressive web app, 在分支webpack-demo-pwa实现
+
+## workbox
+
+### workbox.cacheableResponse.Plugin
+  - statuses必须填写，虽然官方说有默认值，但是不填写取到的是undefined。
+  - headers针对的是Response headers。
+### [workbox.routing.registerRoute](https://developers.google.com/web/tools/workbox/modules/workbox-routing)
+  - 默认情况下，拦截的是GET请求。如果想拦截其他method，则需要特别指出。
+  - 声明的顺序很重要。
+  - 正则表达式默认匹配same-origin，如果想匹配cross-origin，则需要在声明正则时指出beginning of URL。如：
+  ```
+  new RegExp('https://cdn.third-party-site.com.*/styles/.*\.css')
+  ```
+### [NavigationRoute](https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.routing.NavigationRoute)
+
+workbox.routing.registerNavigationRoute 方法实际上实例化了NavigationRoute。NavigationRoute只对mode是`navigate`的请求有用，即请求的目标是document。NavigationRoute对spa非常有用，因为无论你访问什么样的页面route，最终都会重定向到index.html，然后里面的js再控制渲染响应的dom。设置了以后，如访问/,/another,/other/one，都指向index.html，并且符合这些页面都不会再在cache里面缓存一份重复的数据。具体说明设置请查看src/entry/sw.js里面的设置。
+
+### [workbox.strategies](https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.strategies)
+
+- matchOptions: 同[cache.match](https://developer.mozilla.org/zh-CN/docs/Web/API/Cache/match)里面的options。但是注意的是，这个在workbox中仅仅被用在cache匹配。也就是说，如果配置了ignoreSearch:true，当cache里面已经有了一份/path1的缓存，那么在offline时访问/path1, /path1#hash, /path1?querystring ，都会返回/path1的缓存。但是在online时，再次进行访问上述两个url，则在cache里面分别会put一份缓存，即总共3份一模一样的。
+
+### workbox缓存机制问题
+
+workbox在调用cache.put时，request.url是full。比如，设置了ignoreSearch:true，访问another.html，cache里面存了一份；再访问another.html?querystring，虽然response没变，但还是会在cache里面再存一份。解决方案：暂时只能自己写handler来控制responseWith以及cache.put逻辑。但是个人想用workbox.expiration的逻辑，尤其是purgeOnQuotaError的配置，而workbox并没有对此开放更多说明，自己写需要大量的研究以及代码量。
