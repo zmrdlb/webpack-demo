@@ -17,6 +17,13 @@ console.log(styles);
 
 console.log(path.join(__dirname,'dynamic-common'));
 
+// test :global and normal
+var globalContainer = document.createElement('p');
+globalContainer.classList.add('my-global-class');
+globalContainer.innerHTML = ':global方式或普通文本声明的class，不会被编译，也不会被 export。<span class="tips">小提示</span>';
+document.body.appendChild(globalContainer);
+
+// test :local
 var container = document.createElement('div');
 container.classList.add(styles.dynamicCommon);
 document.body.appendChild(container);

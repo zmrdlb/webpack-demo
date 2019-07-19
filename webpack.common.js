@@ -2,6 +2,9 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+// const ChunkRenamePlugin = require("chunk-rename-webpack-plugin");
+const {GenerateSW,InjectManifest} = require('workbox-webpack-plugin');
 
 const paths = {
   src: path.join(__dirname, "src"),
@@ -29,10 +32,10 @@ module.exports = env => {
               {
                   loader: "css-loader",
                   options: {
-                      // 如果不使用less-loader,并且使用局部css声明使用。如果使用less-loader，用这个功能有问题
-                      //modules: true
-                      //将类名转化为驼峰，并且删除原来的命名
-                      camelCase: 'only',
+                      // 指定 mode是 global。如果要用 local 得显示指定 :local
+                      modules: 'global',
+                      // 指定如何转换 :local
+                      localsConvention: 'camelCaseOnly',
                       //development模式下，添加sourceMap，编译调试
                       sourceMap: !_prod
                   }
@@ -41,35 +44,6 @@ module.exports = env => {
               "less-loader"
           ]
      };
-
-    //  if(_prod){
-    //      cssRule = {
-    //            test: /\.less$/,
-    //            use: ExtractTextPlugin.extract({
-    //                fallback: "style-loader",
-    //                use: [ //链式调用从下到上
-    //                    {
-    //                        loader: "css-loader",
-    //                        options: {
-    //                            sourceMap: true,
-    //                            minimize: true
-    //                        }
-    //                    },{
-    //                        loader: 'postcss-loader',
-    //                        options: {
-    //                            sourceMap: true
-    //                        }
-    //                    }, //postcss: http://postcss.org/ 使用js翻译css的工具
-    //                    {
-    //                        loader: "less-loader",
-    //                        options: {
-    //                            sourceMap: true
-    //                        }
-    //                    }
-    //                ]
-    //            })
-    //      };
-    //  }
 
     var that = {
       entry: {
@@ -116,6 +90,7 @@ module.exports = env => {
                       chunks: 'initial',
                       priority: -1
                   }
+
                   /**
                    * 将dynamic导入的js的公共部分提取到一起
                      这块设置与否都不会有所影响。因为splitChunks.cacheGroups.default默认设置是：
@@ -175,34 +150,90 @@ module.exports = env => {
         * 插件并不直接操作单个文件，它直接对整个构建过程起作用。
         */
        plugins: [
+           //注入自己的sw.js
+           new InjectManifest({
+            //    importWorkboxFrom: 'local',
+               swSrc: path.join(paths.src,'entry/sw.js'),
+               swDest: 'sw.js',
+               chunks: ['runtime','commons','vendors','index','another']
+           }),
            //多页应用实例 MPA
         //    new HtmlWebpackPlugin({
-        //        chunks: ['runtime','vendor','index'],
+        //        chunks: ['runtime','commons','vendors','index'],
         //        template: path.join(paths.src,'index.tmpl.html'),
-        //        filename: 'index.html'
+        //        filename: 'index.html',
+        //        minify: _prod? {
+        //             removeComments: true,
+        //             collapseWhitespace: true
+        //        }: false
         //    }),
         //    new HtmlWebpackPlugin({
-        //        chunks: ['runtime','vendor','another'],
+        //        chunks: ['runtime','commons','vendors','another'],
         //        template: path.join(paths.src,'another.tmpl.html'),
-        //        filename: 'another.html'
+        //        filename: 'another.html',
+        //        minify: _prod? {
+        //             removeComments: true,
+        //             collapseWhitespace: true
+        //        }: false
         //    }),
            //单页应用 SPA
            new HtmlWebpackPlugin({
                template: path.join(paths.src,'index.spa.tmpl.html'),
                filename: 'index.html',
+               //excludeChunks: ['sw'],
                minify: _prod? {
                     removeComments: true,
                     collapseWhitespace: true
                }: false
            }),
+           new HtmlWebpackPlugin({
+               template: path.join(paths.src,'404.tmpl.html'),
+               filename: '404.html',
+               chunks: [],
+               minify: _prod? {
+                    removeComments: true,
+                    collapseWhitespace: true
+               }: false
+           }),
+           new HtmlWebpackPlugin({
+               template: path.join(paths.src,'offline.tmpl.html'),
+               filename: 'offline.html',
+               chunks: [],
+               minify: _prod? {
+                    removeComments: true,
+                    collapseWhitespace: true
+               }: false
+           }),
+           new HtmlWebpackPlugin({
+               template: path.join(paths.src,'another.spa.tmpl.html'),
+               filename: 'another.html',
+               chunks: [],
+               minify: _prod? {
+                    removeComments: true,
+                    collapseWhitespace: true
+               }: false
+           }),
+
+           //sw是个特别的存在，此文件单独命名
+        //    new ChunkRenamePlugin({
+        //         sw: "js/sw.js"
+        //    }),
+
            new MiniCssExtractPlugin({
                 filename: _prod? 'css/[name].[contenthash].css': 'css/[name].css',
                 chunkFilename: _prod? 'css/[id].[contenthash].css': 'css/[id].css',
-           })
-           // process.env.NODE_ENV的值，默认由optimization.nodeEnv设置，取自mode值
-        //    new webpack.DefinePlugin({
-        //        'process.env.NODE_ENV': JSON.stringify(_prod? 'production': 'development') //'"production"'
-        //    })
+           }),
+
+           new webpack.DefinePlugin({
+               // process.env.NODE_ENV的值，默认由optimization.nodeEnv设置，取自mode值
+               //'process.env.NODE_ENV': JSON.stringify(_prod? 'production': 'development') //'"production"'
+               'Build_Version': Date.now()
+           }),
+
+           new CopyWebpackPlugin([
+               {from: path.join(paths.src,'manifest.json')},
+               {from: path.join(paths.src,'image'), to: 'image'}
+           ])
        ]
     };
 
