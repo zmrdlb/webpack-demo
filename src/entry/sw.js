@@ -4,14 +4,20 @@ var baseCacheName = 'zmr-pwa-demo',
     version = new URL(location.href).searchParams.get('v'),
     cacheKeyRegExp = /zmr-pwa-demo-.*-(\d+)/;
 
-console.log(version);
+// service worker 安装成功，处于等待状态，直到再也没有其他已经加载的页面使用旧版本的 service worker.
+self.addEventListener('install', function(event) {
+    console.log('sw install');
+    // service worker 里面进入 active 状态
+    self.skipWaiting();
+});
 
-workbox.skipWaiting();
-//workbox.clientsClaim();
-
-//clean old cache. workbox默认不会做此事，因为它认为其他cache name是别的项目
-
+/**
+ * clean old cache. workbox默认不会做此事，因为它认为其他cache name是别的项目
+ * self.clients.claim()：让 active 的 service worker 成为它注册的 scope 里所有 clients 的控制者。
+ */
 self.addEventListener('activate', function(event) {
+    console.log('sw active');
+    console.log('检测旧版本cache并删除');
     event.waitUntil(
         caches.keys().then(function(keyList) {
             return Promise.all(
@@ -24,6 +30,7 @@ self.addEventListener('activate', function(event) {
                     }
                     return false;
                 }).map(key => {
+                    console.error(key);
                     return caches.delete(key);
                 })
             );
@@ -64,7 +71,7 @@ workbox.precaching.precacheAndRoute(self.__precacheManifest,{
 workbox.routing.registerRoute(
     // Cache Js files
     /\.(?:js)((#|\?)[^\.]*)?$/,
-    workbox.strategies.networkFirst({
+    new workbox.strategies.NetworkFirst({
         cacheName: baseCacheName+'-js-cache-'+version,
         plugins: [
             new workbox.expiration.Plugin({
@@ -84,7 +91,7 @@ workbox.routing.registerRoute(
 // workbox.routing.registerRoute(
 //     // Cache Js files
 //     new RegExp('http://code.jquery.com.*\.js((#|\\?)[^\\.]*)?$'),
-//     workbox.strategies.networkFirst({
+//     new workbox.strategies.NetworkFirst({
 //         cacheName: baseCacheName+'-js-cache-'+version,
 //         plugins: [
 //             new workbox.expiration.Plugin({
@@ -129,7 +136,7 @@ workbox.routing.registerRoute(
     // Cache CSS files
     /\.(?:css)((#|\?)[^\.]*)?$/,
     // Use cache but update in the background ASAP
-    workbox.strategies.staleWhileRevalidate({
+    new workbox.strategies.StaleWhileRevalidate({
     // Use a custom cache name
         cacheName: baseCacheName+'-css-cache-'+version,
         plugins: [
@@ -149,7 +156,7 @@ workbox.routing.registerRoute(
     // Cache image files
     /\.(?:png|gif|jpg|jpeg|svg)((#|\?)[^\.]*)?$/,
     // Use the cache if it's available
-    workbox.strategies.cacheFirst({
+    new workbox.strategies.CacheFirst({
         // Use a custom cache name
         cacheName: baseCacheName+'-image-cache-'+version,
         plugins: [
@@ -171,7 +178,7 @@ workbox.routing.registerRoute(
     // Cache image files
     /\.(?:ttf)((#|\?)[^\.]*)?$/,
     // Use the cache if it's available
-    workbox.strategies.cacheFirst({
+    new workbox.strategies.CacheFirst({
         // Use a custom cache name
         cacheName: baseCacheName+'-font-cache-'+version,
         plugins: [
@@ -226,7 +233,7 @@ workbox.routing.registerNavigationRoute('/index.html', {
     ]
 });
 
-const pageHandler = workbox.strategies.networkFirst({
+const pageHandler = new workbox.strategies.NetworkFirst({
     cacheName: baseCacheName+'-page-cache-'+version,
     matchOptions: {
         ignoreSearch: true

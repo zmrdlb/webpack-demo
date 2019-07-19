@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const Merge = require('webpack-merge');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = env => {
     return Merge(require('./webpack.common')(env), {
@@ -38,7 +38,7 @@ module.exports = env => {
         * 插件并不直接操作单个文件，它直接对整个构建过程起作用。
         */
        plugins: [
-           new CleanWebpackPlugin(['public']), //先清理public文件夹
+           new CleanWebpackPlugin(), //先清理public文件夹
            new webpack.HotModuleReplacementPlugin()//热加载插件
        ]
     });

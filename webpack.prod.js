@@ -3,7 +3,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const Merge = require('webpack-merge');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 //const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -31,7 +31,7 @@ module.exports = env => {
             ]
         },
         plugins: [
-            new CleanWebpackPlugin(['dist']),
+            new CleanWebpackPlugin(),
             new webpack.HashedModuleIdsPlugin(),
             new webpack.BannerPlugin('版权所有 zmrdlb'), //给打包后的代码添加版权声明
             // new webpack.optimize.UglifyJsPlugin({

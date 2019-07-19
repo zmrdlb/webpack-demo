@@ -32,10 +32,10 @@ module.exports = env => {
               {
                   loader: "css-loader",
                   options: {
-                      // 如果不使用less-loader,并且使用局部css声明使用。如果使用less-loader，用这个功能有问题
-                      //modules: true
-                      //将类名转化为驼峰，并且删除原来的命名
-                      camelCase: 'only',
+                      // 指定 mode是 global。如果要用 local 得显示指定 :local
+                      modules: 'global',
+                      // 指定如何转换 :local
+                      localsConvention: 'camelCaseOnly',
                       //development模式下，添加sourceMap，编译调试
                       sourceMap: !_prod
                   }
@@ -44,35 +44,6 @@ module.exports = env => {
               "less-loader"
           ]
      };
-
-    //  if(_prod){
-    //      cssRule = {
-    //            test: /\.less$/,
-    //            use: ExtractTextPlugin.extract({
-    //                fallback: "style-loader",
-    //                use: [ //链式调用从下到上
-    //                    {
-    //                        loader: "css-loader",
-    //                        options: {
-    //                            sourceMap: true,
-    //                            minimize: true
-    //                        }
-    //                    },{
-    //                        loader: 'postcss-loader',
-    //                        options: {
-    //                            sourceMap: true
-    //                        }
-    //                    }, //postcss: http://postcss.org/ 使用js翻译css的工具
-    //                    {
-    //                        loader: "less-loader",
-    //                        options: {
-    //                            sourceMap: true
-    //                        }
-    //                    }
-    //                ]
-    //            })
-    //      };
-    //  }
 
     var that = {
       entry: {
