@@ -5,6 +5,7 @@ import {cube} from 'common/tree-shaking';
 import CodeSplitting from 'common/code-splitting';
 import path from 'path';
 import 'common/hmr';
+import $ from 'jquery';
 
 import "./index.less";
 
@@ -26,3 +27,5 @@ ReactDOM.render(
     </div>,
     document.getElementById('root')
 );
+
+$('#exclude-test').html('jquery 单独打包测试')
