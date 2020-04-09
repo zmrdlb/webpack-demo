@@ -11,7 +11,7 @@ webpack学习使用。有的学习总结直接写在了代码里了。
 
 在 babel.config.js 中配置。
 
-有时我们使用的API及语法，浏览器不支持。幸亏，babel 提供了很多 helper code, 根据配置及环境自动编译，让我们无缝使用新的 js 语法。babel helper code 包括两部分：polyfill [corejs](https://github.com/zloirock/core-js)，如 Promise, Map；babel modular runtime helper [@babel/runtime](https://www.babeljs.cn/docs/babel-runtime)，如对 Class 语法重写。
+有时我们使用的API及语法，浏览器不支持。幸亏，babel 提供了很多 helper code, 根据配置及环境自动编译，让我们无缝使用新的 js 语法。babel helper code 包括两部分：polyfill ([corejs](https://github.com/zloirock/core-js))，如 Promise, Map；babel modular runtime helper ([@babel/runtime](https://www.babeljs.cn/docs/babel-runtime))，如对 Class 语法重写。
 
 ## [@babel/preset-env](http://babeljs.io/docs/en/babel-preset-env)
 
