@@ -25,7 +25,7 @@ module.exports = env => {
     console.log(`process.env.NODE_ENV的值是${process.env.NODE_ENV}`);
 
     var cssRule = {
-          test: /\.less$/,
+          test: /\.css$/,
           use: [ //链式调用从下到上
               _prod? {
                   loader: MiniCssExtractPlugin.loader,
@@ -45,7 +45,14 @@ module.exports = env => {
                       sourceMap: !_prod
                   }
               },
-              "postcss-loader", //postcss: http://postcss.org/ 使用js翻译css的工具
+              "postcss-loader" //postcss: http://postcss.org/ 使用js翻译css的工具
+          ]
+     };
+
+    var lessRule = {
+          test: /\.less$/,
+          use: [ //链式调用从下到上
+              ...cssRule.use,
               "less-loader"
           ]
      };
@@ -64,7 +71,8 @@ module.exports = env => {
           alias: {
               "comp": path.resolve(__dirname,"src/components"),
               "common": path.resolve(__dirname,"src/common"),
-              "async": path.resolve(__dirname,"src/async")
+              "async": path.resolve(__dirname,"src/async"),
+              "theme": path.resolve(__dirname,"src/theme"),
           }
       },
 
@@ -148,6 +156,7 @@ module.exports = env => {
                 exclude: /node_modules/
           },
           cssRule,
+          lessRule,
           { //加载图片
                test: /\.(png|svg|jpg|gif)$/,
                use: [{

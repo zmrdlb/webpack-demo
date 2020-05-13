@@ -7,7 +7,7 @@ import path from 'path';
 import 'common/hmr';
 import $ from 'jquery';
 
-import "./index.less";
+import "theme/index.less";
 
 //测试code-splitting
 CodeSplitting('index');
