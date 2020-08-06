@@ -12,17 +12,24 @@ const paths = {
 
 module.exports = env => {
 
+    console.log('webpack.common.js log begin---')
+
     var _prod = env && env.production;
 
     if(env){
+        console.log('有 argument env');
         console.log('NODE_ENV: ', env.NODE_ENV);
         console.log('Production: ', env.production);
+    }else{
+        console.log('没有 argument env');
     }
 
     console.log(_prod? 'production': 'development');
 
     //这里取不到，是development
     console.log(`process.env.NODE_ENV的值是${process.env.NODE_ENV}`);
+
+    console.log('webpack.common.js log end---')
 
     var cssRule = {
           test: /\.css$/,

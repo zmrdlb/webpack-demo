@@ -10,12 +10,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack --config webpack.dev.js --progress",
-    "start": "webpack-dev-server --open --config webpack.dev.js",
-    "build-with-stats": "webpack --config webpack.prod.js --progress --profile --json > stats.json",
+    "dev": "cross-env NODE_ENV=development PLATFORM=web webpack --config webpack.dev.js --progress",
+    "start": "cross-env NODE_ENV=development PLATFORM=web webpack-dev-server --open --config webpack.dev.js",
+    "build-with-stats": "cross-env NODE_ENV=production PLATFORM=web webpack --env.NODE_ENV=production --env.production --config webpack.prod.js --progress --display-error-details --profile --json > stats.json",
     "bundle-buddy": "npx bundle-buddy dist/js/*.map",
-    "buildNodeEnv": "cross-env NODE_ENV=production PLATFORM=web webpack --config webpack.prod.js --progress",
-    "build": "webpack --env.NODE_ENV=production --env.production --config webpack.prod.js --progress --display-error-details",
+    "build": "cross-env NODE_ENV=production PLATFORM=web webpack --env.NODE_ENV=production --env.production --config webpack.prod.js --progress --display-error-details",
     "prod": "npm run build && npm run bundle-buddy"
   },
   "repository": {

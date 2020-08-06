@@ -1,10 +1,19 @@
 module.exports = function (api) {
 
-  console.log('babel.config.js');
+  console.log('babel.config.js log begin---');
+
   console.log('process.env.NODE_ENV',process.env.NODE_ENV); //undefined
 
   const isDevelopment = api.env('development');
   api.cache.using(() => isDevelopment);
+
+  if(isDevelopment){
+      console.warn('检测到是development');
+  }else{
+      console.warn('检测到 不是 development');
+  }
+
+  console.log('babel.config.js log end---')
 
   const presets = [
     [
@@ -29,25 +38,14 @@ module.exports = function (api) {
       [
           "@babel/plugin-transform-runtime",
           {
-              corejs: 3,
-              proposals: true
+              corejs: {
+                  version: 3,
+                  proposals: true
+              }
           }
       ],
       "syntax-dynamic-import"
   ];
-
-  if(isDevelopment){
-      console.warn('检测到是development');
-    //   plugins.push(["react-transform", {
-    //      "transforms": [{
-    //        "transform": "react-transform-hmr",
-      //
-    //        "imports": ["react"],
-      //
-    //        "locals": ["module"]
-    //      }]
-    //   }])
-  }
 
   return {
       presets,
