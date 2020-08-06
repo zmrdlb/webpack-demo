@@ -11,7 +11,7 @@ webpack学习使用。有的学习总结直接写在了代码里了。
 
 在 babel.config.js 中配置。
 
-有时我们使用的API及语法，浏览器不支持。幸亏，babel 提供了很多 helper code, 根据配置及环境自动 polyfill，让我们无缝使用新的 js 语法。babel helper code 包括两部分：built-ins API，如 Promise, Map；babel helper，如对 Class 语法重写。
+有时我们使用的API及语法，浏览器不支持。幸亏，babel 提供了很多 helper code, 根据配置及环境自动编译，让我们无缝使用新的 js 语法。babel helper code 包括两部分：polyfill ([corejs](https://github.com/zloirock/core-js))，如 Promise, Map；babel modular runtime helper ([@babel/runtime](https://www.babeljs.cn/docs/babel-runtime))，如对 Class 语法重写。
 
 ## [@babel/preset-env](http://babeljs.io/docs/en/babel-preset-env)
 
@@ -22,6 +22,7 @@ webpack学习使用。有的学习总结直接写在了代码里了。
 ## [@babel/plugin-transform-runtime](https://babeljs.io/docs/en/babel-plugin-transform-runtime)
 
 一般情况下，babel helper code 是被内联注入的，这会造成全局环境污染，以及代码重复。该 plugin 便解决了这个问题，将内联注入的代码替换为独立的 module。
+> 因为 `@babel/runtime` 提供了 `regenerator-runtime/runtime` 的实现 `@babel/runtime/regenerator`，且 `@babel/plugin-transform-runtime` 会自动识别当代码中使用了 generator 和 async function 会自动引入 @babel/runtime/regenerator。所以不需要在代码中手动引入 `regenerator-runtime/runtime`。
 
 # [browserslist](https://github.com/browserslist/browserslist)
 
