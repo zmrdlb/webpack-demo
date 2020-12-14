@@ -99,56 +99,47 @@ module.exports = env => {
               cacheGroups: {
                   jquery: {
                       test: /[\\/]node_modules[\\/](jquery)[\\/]/, //将 jquery 打包成一个单独的文件
-                      name: "jquery",
+                      //name: "jquery",
                       chunks: "all",
                       priority: 0
                   },
                   react: {
                       test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/, //将 react 相关的 module 打包成一个单独的文件
-                      name: "react",
+                      //name: "react",
                       chunks: "all",
                       priority: -1
                   },
                   //将其他的package都合并到vendors
-                  vendors: {
+                  vendor: {
                       test: /[\\/]node_modules[\\/]/i, //匹配 /node_modules/
-                      name: "vendors",
+                      //name: "vendor",
                       chunks: "all",
                       // 根据 priority 就可推断出 vendors 无需包含 jquery, react, react-dom。请理解官方这句话
                       // A module can belong to multiple cache groups. The optimization will prefer the cache group with a higher priority.
                       priority: -2
                   },
-                  //将entry points的公共代码提取到commons中
+                  //将entry points 和 async 的公共代码提取到common中
                   /**
                    * 奇怪的问题。开启此配置，运行 npm run build 会产生错误：
-                   * ERROR in chunk commons [initial]
+                   * ERROR in chunk common [all]
                      Cannot read property 'pop' of undefined
                      网上查询后与 MiniCssExtractPlugin 有关。
 
                    * 解决方案：enforce 设置为 true
+                   *
+                   * 这个情况修改后还未测试。需再次测试。
                    */
-                  commons: {
-                      name: 'commons',
-                      chunks: 'initial',
-                      priority: -3,
-                      enforce: true
-                  }
+                  common: {
+                      //name: 'common',
+                      chunks: 'all',
+                      minChunks: 2,
+                      enforce: true,
+                      priority: -3
+                  },
 
-                  /**
-                   * 将dynamic导入的js的公共部分提取到一起
-                     这块设置与否都不会有所影响。因为splitChunks.cacheGroups.default默认设置是：
-                       default: {
-                           minChunks: 2,
-                           priority: -20,
-                           reuseExistingChunk: true
-                       }
-                       chunks是继承的splitChunks.chunks，‘async’
-                   */
-                //   async: {
-                //       //name: 'async', 如果指定name，则import引入的module都会合并到async.[chunkhash].js
-                //       chunks: 'async',
-                //       priority: -4
-                //   }
+                  // 禁用默认的设置
+                  defaultVendors: false,
+                  default: false
               }
           },
           runtimeChunk: 'single'
