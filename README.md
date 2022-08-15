@@ -91,6 +91,10 @@ runtimeChunk的选项说明：
 - 'single': 将所有entry point的runtime都提取到一个文件runtime.js中
 - 'multiple': 同true
 
+## [webpackChunkName](https://v4.webpack.js.org/api/module-methods/#magic-comments)
+
+配置 chunk name。默认，webpack 使用 [id].js 命名 chunk file（即便使用了[name]占位符），每个异步引入的 js module 单独生成一个 chunk file。动态 import 配置了 webpackChunkName 后 [name] 生效。如果引入多个 js module 时使用了同一个 webpackChunkName，则打包后全部放入同一个 chunk file，即便用 [id].js 配置 chunkFilename。
+
 # analyze
 
 对生成的stat.json进行性能分析，[官方工具](https://webpack.github.io/analyse/)
